@@ -1,0 +1,47 @@
+FROM cgr.dev/chainguard/wolfi-base
+LABEL maintainer="cslev <cslev@gmx.com>"
+
+#packages needed for compilation
+ENV DEPS ca-certificates \
+         git \
+         golangci-lint
+
+ENV TO_DEL  diffutils \
+            build-base \
+            go-1.20 \
+            libstdc++-dev \
+            libstdc++ \
+            ncurses \
+            binutils-gold \
+            binutils \
+            libgcc \
+            glibc-dev \
+            gcc \
+            make \ 
+            pkgconf \
+            linux-headers
+
+
+COPY source/resolv.conf /etc
+WORKDIR /dnscrypt-proxy
+
+RUN apk update && \
+  apk add $DEPS && \
+  git clone https://github.com/dnscrypt/dnscrypt-proxy src && \
+  export GOOS=linux && \
+  export GOARCH=amd64 && \
+  cd src/dnscrypt-proxy && \
+  go build -ldflags="-s -w" -mod vendor && \
+  mkdir -p config/ && \
+  mkdir -p logs/ && \
+  #cp /tmp/example-dnscrypt-proxy.toml config/dnscrypt-proxy.toml && \
+  apk del $DEPS && \
+  apk del $TO_DEL && \
+  apk cache clean
+
+#compiled binary of dnscrypt-proxy is under the src/ dir
+# ENTRYPOINT [ "/bin/sh" ]
+# CMD ["-l"]
+ENTRYPOINT ["/dnscrypt-proxy/src/dnscrypt-proxy/dnscrypt-proxy"]
+#set the config file 
+CMD ["-config", "/dnscrypt-proxy/config/dnscrypt-proxy.toml"]

@@ -1,0 +1,29 @@
+FROM debian:bookworm
+LABEL maintainer="cslev <cslev@gmx.com>"
+
+#packages needed for compilation
+ENV DEPS ca-certificates \
+         git \
+         golang
+
+COPY source/resolv.conf /etc
+WORKDIR /dnscrypt-proxy
+SHELL ["/bin/bash", "-c"]
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $DEPS && \
+  git clone https://github.com/dnscrypt/dnscrypt-proxy src && \
+  export GOOS=linux && \
+  export GOARCH=amd64 && \
+  cd src/dnscrypt-proxy && \
+  go build -ldflags="-s -w" -mod vendor && \
+  mkdir -p config/ && \
+  mkdir -p logs/ && \
+  #cp /tmp/example-dnscrypt-proxy.toml config/dnscrypt-proxy.toml
+  apt-get remove --purge -y $DEPS && \
+  apt-get autoremove --purge -y && \
+  apt-get clean
+
+#compiled binary of dnscrypt-proxy is under the src/ dir
+ENTRYPOINT ["/dnscrypt-proxy/src/dnscrypt-proxy/dnscrypt-proxy"]
+#set the config file 
+CMD ["-config", "/dnscrypt-proxy/config/dnscrypt-proxy.toml"]
