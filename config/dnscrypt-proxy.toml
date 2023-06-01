@@ -29,7 +29,7 @@
 ##
 ## Remove the leading # first to enable this; lines starting with # are ignored.
 
-# server_names = ['scaleway-fr', 'google', 'yandex', 'cloudflare']
+#server_names = ['adguard-dns-unfiltered']
 
 
 ## List of local addresses and ports to listen to. Can be IPv4 and/or IPv6.
@@ -64,7 +64,7 @@ ipv4_servers = true
 ipv6_servers = false
 
 # Use servers implementing the DNSCrypt protocol
-dnscrypt_servers = false
+dnscrypt_servers = true
 
 # Use servers implementing the DNS-over-HTTPS protocol
 doh_servers = true
@@ -170,12 +170,12 @@ lb_strategy = 'random'
 ## This file is different from other log files, and will not be
 ## automatically rotated by the application.
 
-# log_file = 'dnscrypt-proxy.log'
+log_file = '/dnscrypt-proxy/logs/dnscrypt-proxy.log'
 
 
 ## When using a log file, only keep logs from the most recent launch.
 
-# log_file_latest = true
+log_file_latest = true
 
 
 ## Use the system logger (syslog on Unix, Event Log on Windows)
