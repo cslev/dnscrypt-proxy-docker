@@ -75,5 +75,9 @@ networks:
         - subnet: 172.29.1.0/24        
 ```
 
+# Docker HUB
+Images are also available on docker hub, so you can pull them straighaway without compiling them.
+See the tags on [https://hub.docker.com/r/cslev/dnscrypt-proxy-research/tag](https://hub.docker.com/r/cslev/dnscrypt-proxy-research/tags)
+
 
 
